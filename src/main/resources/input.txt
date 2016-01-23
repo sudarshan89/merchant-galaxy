@@ -1,5 +1,5 @@
 glob is I
-prok is        V
+prok is V
 pish is X
 tegj is L
 glob glob Silver is 34 Credits
