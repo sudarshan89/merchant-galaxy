@@ -6,6 +6,7 @@ import org.assertj.core.api.Condition;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,5 +52,12 @@ public class GalaxyMerchantTest {
         final List<GalacticCurrency> galacticCurrencies = GalaxyMerchant.CreateGalacticCurrencies(galacticCurrencyAssignments, galaxyMerchant.romanSymbols);
         assertThat(galacticCurrencies).extracting("symbol").containsExactly("glob","pish","tegj");
         assertThat(galacticCurrencies).extracting("romanSymbol.symbol").containsExactly('I','X','L');
+    }
+
+    @Test
+    public void givenAllTransactions_whenSelectingRareMetalTransactions_itShouldReturnAllRareMetalPerUnitTransactions(){
+        List<String> allTransactions = Lists.newArrayList("glob is I","glob glob Silver is 34 Credits","prok Gold is 57800 Credits","how many Credits is glob prok Iron ?");
+        final List<String> rareMetalPerUnitValueAssignmentTransactions = GalaxyMerchant.SelectRareMetalPerUnitValueAssignmentTransactions(allTransactions, Collections.emptyList());
+        assertThat(rareMetalPerUnitValueAssignmentTransactions).containsExactly("glob glob Silver is 34 Credits","prok Gold is 57800 Credits");
     }
 }

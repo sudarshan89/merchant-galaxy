@@ -1,6 +1,7 @@
 package co.in;
 
 import co.in.model.GalacticCurrency;
+import co.in.model.RareMetal;
 import co.in.model.RomanSymbol;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -41,6 +42,7 @@ public class GalaxyMerchant {
         final List<String> sanitizedInput = SantizeInput(merchantTransactions);
         List<String> galacticCurrencyAssignments = SelectOnlyGalacticCurrencyAssignments(merchantTransactions, romanSymbols);
         final List<GalacticCurrency> galacticCurrencies = CreateGalacticCurrencies(galacticCurrencyAssignments, romanSymbols);
+        final List<String> rareMetalPerUnitValueAssignmentTransactions = SelectRareMetalPerUnitValueAssignmentTransactions(sanitizedInput,galacticCurrencies);
         return output;
     }
 
@@ -70,4 +72,14 @@ public class GalaxyMerchant {
             return new GalacticCurrency(galacticCurrencySymbol,selectedRomanSymbol);
         }).collect(Collectors.toList());
     }
+
+    /**
+     * @param sanitizedInput
+     * @param galacticCurrencies
+     * @return
+     */
+    static List<String> SelectRareMetalPerUnitValueAssignmentTransactions(List<String> sanitizedInput, List<GalacticCurrency> galacticCurrencies) {
+        return sanitizedInput.stream().filter(transaction -> transaction.endsWith("Credits")).collect(Collectors.toList());
+    }
+
 }
