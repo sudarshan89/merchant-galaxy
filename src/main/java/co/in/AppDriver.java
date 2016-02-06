@@ -14,8 +14,7 @@ import java.util.List;
 public class AppDriver {
     public static void main(String[] args) throws IOException, URISyntaxException {
         System.out.println("Hello Merchant Galaxy Kata");
-        GalaxyMerchant galaxyMerchant = new GalaxyMerchant();
         final List<String> input = Files.readAllLines(Paths.get(ClassLoader.getSystemResource("input.txt").toURI()));
-        galaxyMerchant.startTrading(ImmutableList.copyOf(input));
+        new GalaxyMerchant().startTrading(ImmutableList.copyOf(input));
     }
 }

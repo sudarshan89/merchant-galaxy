@@ -1,14 +1,13 @@
 package co.in;
 
 import co.in.model.GalacticCurrency;
+import co.in.model.GalacticCurrencyExpression;
 import co.in.model.RareMetal;
 import co.in.model.RomanSymbol;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -25,14 +24,14 @@ public class GalaxyMerchant {
         init();
     }
 
-    public static void init(){
-        RomanSymbol romanSymbolOne = new RomanSymbol('I');
-        RomanSymbol romanSymbolFive = new RomanSymbol('V');
-        RomanSymbol romanSymbolTen = new RomanSymbol('X');
-        RomanSymbol romanSymbolFifty = new RomanSymbol('L');
-        RomanSymbol romanSymbolHundred = new RomanSymbol('C');
-        RomanSymbol romanSymbolFiveHundred = new RomanSymbol('D');
-        RomanSymbol romanSymbolThousand = new RomanSymbol('M');
+    public static void init() {
+        RomanSymbol romanSymbolThousand = RomanSymbol.StandaloneSymbol('M', 1000);
+        RomanSymbol romanSymbolFiveHundred = RomanSymbol.StandaloneSymbol('D', 500);
+        RomanSymbol romanSymbolFifty = RomanSymbol.StandaloneSymbol('L', 50);
+        RomanSymbol romanSymbolFive = RomanSymbol.StandaloneSymbol('V', 5);
+        RomanSymbol romanSymbolHundred = RomanSymbol.RepeatableAndSubtractableSymbol('C', Lists.newArrayList(romanSymbolFiveHundred, romanSymbolThousand), 100);
+        RomanSymbol romanSymbolTen = RomanSymbol.RepeatableAndSubtractableSymbol('X', Lists.newArrayList(romanSymbolFifty, romanSymbolHundred), 10);
+        RomanSymbol romanSymbolOne = RomanSymbol.RepeatableAndSubtractableSymbol('I', Lists.newArrayList(romanSymbolFive, romanSymbolTen), 1);
         romanSymbols = ImmutableList.of(romanSymbolOne, romanSymbolFive, romanSymbolTen, romanSymbolFifty,
                 romanSymbolHundred, romanSymbolFiveHundred, romanSymbolThousand);
     }
@@ -41,8 +40,10 @@ public class GalaxyMerchant {
         List<String> output = new ArrayList<>();
         final List<String> sanitizedInput = SantizeInput(merchantTransactions);
         List<String> galacticCurrencyAssignments = SelectOnlyGalacticCurrencyAssignments(merchantTransactions, romanSymbols);
-        final List<GalacticCurrency> galacticCurrencies = CreateGalacticCurrencies(galacticCurrencyAssignments, romanSymbols);
-        final List<String> rareMetalPerUnitValueAssignmentTransactions = SelectRareMetalPerUnitValueAssignmentTransactions(sanitizedInput,galacticCurrencies);
+        final List<GalacticCurrency> galacticCurrencies = ImmutableList.copyOf(CreateGalacticCurrencies(galacticCurrencyAssignments, romanSymbols));
+        final ArrayList<String> inputWithoutCurrencyAssignments = Lists.newArrayList(sanitizedInput);
+        inputWithoutCurrencyAssignments.removeAll(galacticCurrencyAssignments);
+        CalculateAndPrint(inputWithoutCurrencyAssignments, galacticCurrencies);
         return output;
     }
 
@@ -69,16 +70,28 @@ public class GalaxyMerchant {
             final Character romanValueSymbol = transaction[2].toCharArray()[0];
             final RomanSymbol selectedRomanSymbol = romanSymbols.stream().filter(romanSymbol ->
                     romanSymbol.sameSymbol(romanValueSymbol)).findAny().get();
-            return new GalacticCurrency(galacticCurrencySymbol,selectedRomanSymbol);
+            return new GalacticCurrency(galacticCurrencySymbol, selectedRomanSymbol);
         }).collect(Collectors.toList());
+    }
+
+    private static void CalculateAndPrint(List<String> inputWithoutCurrencyAssignments, final List<GalacticCurrency> galacticCurrenciesMasterList) {
+        final List<String> rareMetalPerUnitValueAssignmentTransactions = SelectRareMetalPerUnitValueAssignmentTransactions(inputWithoutCurrencyAssignments);
+        for (String rareMetalPerUnitValueAssignmentTransaction : rareMetalPerUnitValueAssignmentTransactions) {
+            final List<GalacticCurrency> galacticCurrenciesInTransaction = GalacticCurrency.
+                    createFromTransactionComponents(Arrays.asList(rareMetalPerUnitValueAssignmentTransaction.split(" "))
+                            , galacticCurrenciesMasterList);
+            GalacticCurrencyExpression galacticCurrencyExpression =
+                    new GalacticCurrencyExpression(galacticCurrenciesInTransaction);
+            final RareMetal rareMetal = RareMetal.createFromAssignmentTransaction(rareMetalPerUnitValueAssignmentTransaction, galacticCurrencyExpression);
+        }
+
     }
 
     /**
      * @param sanitizedInput
-     * @param galacticCurrencies
      * @return
      */
-    static List<String> SelectRareMetalPerUnitValueAssignmentTransactions(List<String> sanitizedInput, List<GalacticCurrency> galacticCurrencies) {
+    static List<String> SelectRareMetalPerUnitValueAssignmentTransactions(List<String> sanitizedInput) {
         return sanitizedInput.stream().filter(transaction -> transaction.endsWith("Credits")).collect(Collectors.toList());
     }
 

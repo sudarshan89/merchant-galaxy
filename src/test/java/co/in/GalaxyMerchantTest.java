@@ -2,7 +2,6 @@ package co.in;
 
 import co.in.model.GalacticCurrency;
 import com.google.common.collect.Lists;
-import org.assertj.core.api.Condition;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -57,7 +56,7 @@ public class GalaxyMerchantTest {
     @Test
     public void givenAllTransactions_whenSelectingRareMetalTransactions_itShouldReturnAllRareMetalPerUnitTransactions(){
         List<String> allTransactions = Lists.newArrayList("glob is I","glob glob Silver is 34 Credits","prok Gold is 57800 Credits","how many Credits is glob prok Iron ?");
-        final List<String> rareMetalPerUnitValueAssignmentTransactions = GalaxyMerchant.SelectRareMetalPerUnitValueAssignmentTransactions(allTransactions, Collections.emptyList());
+        final List<String> rareMetalPerUnitValueAssignmentTransactions = GalaxyMerchant.SelectRareMetalPerUnitValueAssignmentTransactions(allTransactions);
         assertThat(rareMetalPerUnitValueAssignmentTransactions).containsExactly("glob glob Silver is 34 Credits","prok Gold is 57800 Credits");
     }
 }
