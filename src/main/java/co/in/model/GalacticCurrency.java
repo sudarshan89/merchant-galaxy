@@ -1,5 +1,6 @@
 package co.in.model;
 
+import com.google.common.primitives.Ints;
 import lombok.*;
 
 import java.util.List;
@@ -18,6 +19,8 @@ public class GalacticCurrency {
     @Getter(AccessLevel.PACKAGE)
     final private RomanSymbol romanSymbol;
 
+    final static GalacticCurrency ZERO = new GalacticCurrency("ZERO",RomanSymbol.ZERO);
+
     public static GalacticCurrency createFromTransactionComponent(String galacticCurrencySymbol, List<GalacticCurrency> galacticCurrenciesMasterList) {
         return galacticCurrenciesMasterList.stream().filter(galacticCurrency -> galacticCurrency.isSame(galacticCurrencySymbol)).findFirst().get();
     }
@@ -29,7 +32,7 @@ public class GalacticCurrency {
                 });
         final List<GalacticCurrency> galacticCurrenciesInTransaction = galacticCurrencyComponents.map(galacticCurrencySymbol ->
                 createFromTransactionComponent(galacticCurrencySymbol, galacticCurrenciesMasterList)).collect(Collectors.toList());
-        if(galacticCurrenciesInTransaction.isEmpty())
+        if (galacticCurrenciesInTransaction.isEmpty())
             throw new InvalidGalacticTransactionException("No Galactic Currencies Found");
         return galacticCurrenciesInTransaction;
     }
@@ -38,16 +41,25 @@ public class GalacticCurrency {
         return this.symbol.equals(symbol);
     }
 
-    public Boolean isRepeatable(){
+    public Boolean isRepeatable() {
         return romanSymbol.getIsRepeatable();
     }
 
-    public Boolean isSubstractable(){
+    public Boolean isSubstractable() {
         return romanSymbol.getIsSubtractable();
     }
 
-    public Integer getDecimalValue(){
+    public Integer getDecimalValue() {
         return romanSymbol.getValue();
     }
+
+    public Boolean isValidSubtraction(GalacticCurrency galacticCurrency) {
+        return this.romanSymbol.getSubtractableFrom().contains(galacticCurrency.getRomanSymbol());
+    }
+
+    public boolean isLessThan(GalacticCurrency galacticCurrency) {
+        return this.getDecimalValue() < galacticCurrency.getDecimalValue();
+    }
+
 
 }

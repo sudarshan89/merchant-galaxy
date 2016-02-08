@@ -1,5 +1,6 @@
 package co.in.model;
 
+import com.google.common.primitives.Ints;
 import lombok.*;
 
 import java.util.Collections;
@@ -23,6 +24,8 @@ public class RomanSymbol {
     @Getter
     private final Integer value;
 
+    final static RomanSymbol ZERO = ZeroSymbol();
+
     public static RomanSymbol StandaloneSymbol(Character symbol,Integer value){
         return new RomanSymbol(symbol,Boolean.FALSE,Boolean.FALSE, Collections.emptyList(),value);
     }
@@ -31,7 +34,11 @@ public class RomanSymbol {
         return new RomanSymbol(symbol,Boolean.TRUE,Boolean.TRUE, subtractableFrom,value);
     }
 
+    static RomanSymbol ZeroSymbol(){
+        return new RomanSymbol('Z',Boolean.FALSE,Boolean.FALSE, Collections.emptyList(),0);
+    }
     public boolean sameSymbol(Character symbol){
         return this.symbol.equals(symbol);
     }
+
 }

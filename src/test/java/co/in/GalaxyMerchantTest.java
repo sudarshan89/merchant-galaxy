@@ -59,4 +59,20 @@ public class GalaxyMerchantTest {
         final List<String> rareMetalPerUnitValueAssignmentTransactions = GalaxyMerchant.SelectRareMetalPerUnitValueAssignmentTransactions(allTransactions);
         assertThat(rareMetalPerUnitValueAssignmentTransactions).containsExactly("glob glob Silver is 34 Credits","prok Gold is 57800 Credits");
     }
+
+    @Test
+    public void givenAllTransactions_whenSelectingGalacticCurrencyTransactions_itShouldReturnAllGalacticCurrencyTransaction(){
+        List<String> allTransactions = Lists.newArrayList("glob is I","glob glob Silver is 34 Credits","prok Gold is 57800 Credits","how much is pish tegj glob glob ?");
+        final List<String> rareMetalPerUnitValueAssignmentTransactions = GalaxyMerchant.SelectGalacticCurrencyTransactions(allTransactions);
+        assertThat(rareMetalPerUnitValueAssignmentTransactions).containsExactly("how much is pish tegj glob glob ?");
+    }
+
+    @Test
+    public void givenAllTransactions_whenSelectingCreditsTransactions_itShouldReturnAllCreditsTransactions(){
+        List<String> allTransactions = Lists.newArrayList("glob is I","glob glob Silver is 34 Credits","prok Gold is 57800 Credits"
+                ,"how much is pish tegj glob glob ?","how many Credits is glob prok Gold ?","how many Credits is glob prok Iron ?");
+        final List<String> rareMetalPerUnitValueAssignmentTransactions = GalaxyMerchant.SelectCreditTransactions(allTransactions);
+        assertThat(rareMetalPerUnitValueAssignmentTransactions).containsExactly("how many Credits is glob prok Gold ?","how many Credits is glob prok Iron ?");
+    }
+
 }
