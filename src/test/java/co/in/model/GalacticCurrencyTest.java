@@ -58,11 +58,10 @@ public class GalacticCurrencyTest {
         assertThat(galacticCurrenciesFromTransaction).extracting("symbol").containsExactly("glob","prok");
     }
 
-    @Test(expected = InvalidGalacticTransactionException.class)
     public void givenTransactionWithZeroGalacticCurrencies_whenCreatingGalacticCurrencies_itShouldThrowInvalidTransactionException() throws Exception {
         List<GalacticCurrency> galacticCurrenciesFromTransaction =
                 GalacticCurrency.createFromTransactionComponents(Lists.newArrayList("how","many","Credits","is","Silver","?"), this.galacticCurrencies);
-        assertThat(galacticCurrenciesFromTransaction).extracting("symbol").containsExactly("glob","prok");
+        assertThat(galacticCurrenciesFromTransaction).isEmpty();
     }
 
 }

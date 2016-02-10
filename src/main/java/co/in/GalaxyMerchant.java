@@ -6,9 +6,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import java.io.Console;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static co.in.model.RareMetal.RareMetalsInTransactionLogs;
 
 /**
  * Created by s.sreenivasan on 1/23/2016.
@@ -36,6 +39,11 @@ public class GalaxyMerchant {
                 romanSymbolHundred, romanSymbolFiveHundred, romanSymbolThousand);
     }
 
+    /**
+     * @TODO
+     * @param merchantTransactions
+     * @return
+     */
     public List<String> startTrading(final List<String> merchantTransactions) {
         List<String> output = new ArrayList<>();
         final List<String> sanitizedInput = SantizeInput(merchantTransactions);
@@ -76,144 +84,22 @@ public class GalaxyMerchant {
 
     private static void CalculateAndPrint(List<String> inputWithoutCurrencyAssignments, final List<GalacticCurrency> galacticCurrenciesMasterList) {
         final List<RareMetal> rareMetals = RareMetalsInTransactionLogs(inputWithoutCurrencyAssignments, galacticCurrenciesMasterList);
-        PrintGalacticExpressionInTransactionLogs(inputWithoutCurrencyAssignments, galacticCurrenciesMasterList);
-        PrintCreditsTransactionsInTransactionLogs(inputWithoutCurrencyAssignments, galacticCurrenciesMasterList, rareMetals);
+        ConsoleOutputManager consoleOutputManager = new ConsoleOutputManager(galacticCurrenciesMasterList);
+        PrintGalacticExpressionInTransactionLogs(inputWithoutCurrencyAssignments, consoleOutputManager);
+        PrintCreditsTransactionsInTransactionLogs(inputWithoutCurrencyAssignments, consoleOutputManager, rareMetals);
     }
 
     private static void PrintCreditsTransactionsInTransactionLogs(List<String> inputWithoutCurrencyAssignments,
-                                                                   List<GalacticCurrency> galacticCurrenciesMasterList, List<RareMetal> rareMetals) {
-        final List<String> creditsTransactions = SelectCreditTransactions(inputWithoutCurrencyAssignments);
-        final List<GalacticCurrencyExpression> galacticCurrencyExpressions = GetGalacticCurrencyExpressions(galacticCurrenciesMasterList, creditsTransactions);
-        final List<String> creditTransactionOutputs = Lists.newArrayList();
-        for (int i = 0; i < creditsTransactions.size(); i++) {
-            final String creditsTransaction = creditsTransactions.get(i);
-            GalacticCurrencyExpression galacticCurrencyExpression = galacticCurrencyExpressions.get(i);
-            String[] creditTransactionComponents = creditsTransaction.split(" ");
-            final String rareMetalSymbol = creditTransactionComponents[creditTransactionComponents.length - 2];
-            Optional<RareMetal> rareMetal = RareMetal.selectBySymbol(rareMetalSymbol, rareMetals);
-            if (rareMetal.isPresent()) {
-                final BigDecimal creditsValue = rareMetal.get().getPerUnitValue().multiply(BigDecimal.valueOf(galacticCurrencyExpression.getGalacticCurrencyExpressionValue()));
-                final String creditTransactionOutput = PrepareCreditTransactionOutput(creditsTransaction, creditsValue, galacticCurrenciesMasterList);
-                creditTransactionOutputs.add(creditTransactionOutput);
-            } else {
-                throw new InvalidGalacticTransactionException("Rare metal not found in credit transaction");
-            }
-        }
-        Print(creditTransactionOutputs);
-    }
-
-    static String PrepareCreditTransactionOutput(String creditsTransaction, BigDecimal creditsValue, List<GalacticCurrency> galacticCurrenciesMasterList) {
-        final String[] splits = creditsTransaction.split(" ");
-        final List<String> galacticCurrenciesInTransactionOutput = Arrays.asList(splits).stream().
-                filter(s -> galacticCurrenciesMasterList.stream().anyMatch(galacticCurrency -> galacticCurrency.isSame(s))).collect(Collectors.toList());
-        galacticCurrenciesInTransactionOutput.add("is");
-        galacticCurrenciesInTransactionOutput.add(creditsValue.toPlainString());
-        galacticCurrenciesInTransactionOutput.add("Credits");
-        return Joiner.on(" ").join(galacticCurrenciesInTransactionOutput);
-    }
-
-    private static void PrintCreditsTransactions(List<String> creditsTransactions, List<Integer> credits) {
-        Preconditions.checkArgument(creditsTransactions.size() == creditsTransactions.size());
-    }
-
-    static List<String> SelectCreditTransactions(List<String> inputWithoutCurrencyAssignments) {
-        return inputWithoutCurrencyAssignments.stream().filter(s -> s.startsWith("how many")).collect(Collectors.toList());
-    }
-
-    /**
-     * @param inputWithoutCurrencyAssignments
-     * @param galacticCurrenciesMasterList
-     * @return
-     */
-    private static void PrintGalacticExpressionInTransactionLogs(List<String> inputWithoutCurrencyAssignments, List<GalacticCurrency> galacticCurrenciesMasterList) {
-        final List<String> galacticCurrencyTransactions = SelectGalacticCurrencyTransactions(inputWithoutCurrencyAssignments);
-        final List<GalacticCurrencyExpression> galacticCurrencyExpressions = GetGalacticCurrencyExpressions(galacticCurrenciesMasterList,
-                galacticCurrencyTransactions);
-        final List<String> expressionTransactionOutput = PrepareExpressionTransactionOutput(galacticCurrencyTransactions, galacticCurrencyExpressions);
-        Print(expressionTransactionOutput);
-    }
-
-    /**
-     * @param galacticCurrenciesMasterList
-     * @param transactionsWithGalacticCurrencyExpressions
-     * @return
-     * @TODO Test This
-     */
-    static List<GalacticCurrencyExpression> GetGalacticCurrencyExpressions(List<GalacticCurrency> galacticCurrenciesMasterList,
-                                                                           List<String> transactionsWithGalacticCurrencyExpressions) {
-        final List<GalacticCurrencyExpression> galacticCurrencyExpressions = Lists.newArrayList();
-        for (String galacticCurrencyTransaction : transactionsWithGalacticCurrencyExpressions) {
-            final List<String> galacticCurrencyTransactionComponents = Arrays.asList(galacticCurrencyTransaction.split(" "));
-            final List<GalacticCurrency> galacticCurrencies =
-                    GalacticCurrency.createFromTransactionComponents(galacticCurrencyTransactionComponents, galacticCurrenciesMasterList);
-            GalacticCurrencyExpression galacticCurrencyExpression = new GalacticCurrencyExpression(galacticCurrencies);
-            galacticCurrencyExpressions.add(galacticCurrencyExpression);
-        }
-        return galacticCurrencyExpressions;
-    }
-
-    private static void Print(List<String> transactionOutput) {
-        transactionOutput.stream().forEach(s -> System.out.println(s));
-    }
-
-    private static List<String> PrepareExpressionTransactionOutput(List<String> galacticCurrencyTransactions,
-                                                                   List<GalacticCurrencyExpression> galacticCurrencyExpressions) {
-        Preconditions.checkArgument(galacticCurrencyTransactions.size() == galacticCurrencyExpressions.size());
-        final List<String> expressionTransactionOutput = Lists.newArrayList();
-        for (int i = 0; i < galacticCurrencyTransactions.size(); i++) {
-            final String transaction = galacticCurrencyTransactions.get(i);
-            final GalacticCurrencyExpression expression = galacticCurrencyExpressions.get(i);
-            final List<String> outputString = Arrays.asList(transaction.split(" ")).stream().map(s -> {
-                if (s.equals("how") || s.equals("much") || s.equals("is") || s.equals("?")) {
-                    return "EMPTY";
-                } else {
-                    return s;
-                }
-            }).collect(Collectors.toList());
-            outputString.removeAll(Collections.singleton("EMPTY"));
-            outputString.add("is");
-            outputString.add(expression.getGalacticCurrencyExpressionValue().toString());
-            expressionTransactionOutput.add(Joiner.on(" ").join(outputString).trim());
-        }
-        return expressionTransactionOutput;
+                                                                  ConsoleOutputManager consoleOutputManager, List<RareMetal> rareMetals) {
+        consoleOutputManager.printCreditsTransactionsInTransactionLogs(inputWithoutCurrencyAssignments ,rareMetals);
     }
 
     /**
      * @param inputWithoutCurrencyAssignments
      * @return
      */
-    static List<String> SelectGalacticCurrencyTransactions(List<String> inputWithoutCurrencyAssignments) {
-        return inputWithoutCurrencyAssignments.stream().filter(s -> s.startsWith("how much is")).collect(Collectors.toList());
-    }
-
-    /**
-     * @param inputWithoutCurrencyAssignments
-     * @param galacticCurrenciesMasterList
-     * @return
-     * @TODO Test this ?
-     */
-    static List<RareMetal> RareMetalsInTransactionLogs(List<String> inputWithoutCurrencyAssignments,
-                                                       List<GalacticCurrency> galacticCurrenciesMasterList) {
-        final List<String> rareMetalPerUnitValueAssignmentTransactions = SelectRareMetalPerUnitValueAssignmentTransactions(inputWithoutCurrencyAssignments);
-        final List<RareMetal> rareMetalsInTransactionLogs = Lists.newArrayList();
-        for (String rareMetalPerUnitValueAssignmentTransaction : rareMetalPerUnitValueAssignmentTransactions) {
-            final List<GalacticCurrency> galacticCurrenciesInTransaction = GalacticCurrency.
-                    createFromTransactionComponents(Arrays.asList(rareMetalPerUnitValueAssignmentTransaction.split(" "))
-                            , galacticCurrenciesMasterList);
-            GalacticCurrencyExpression galacticCurrencyExpression =
-                    new GalacticCurrencyExpression(galacticCurrenciesInTransaction);
-            final RareMetal rareMetal = RareMetal.createFromAssignmentTransaction(rareMetalPerUnitValueAssignmentTransaction, galacticCurrencyExpression);
-            rareMetalsInTransactionLogs.add(rareMetal);
-        }
-        return rareMetalsInTransactionLogs;
-    }
-
-    /**
-     * @param sanitizedInput
-     * @return
-     */
-    static List<String> SelectRareMetalPerUnitValueAssignmentTransactions(List<String> sanitizedInput) {
-        return sanitizedInput.stream().filter(transaction -> transaction.endsWith("Credits")).collect(Collectors.toList());
+    private static void PrintGalacticExpressionInTransactionLogs(List<String> inputWithoutCurrencyAssignments, ConsoleOutputManager consoleOutputManager) {
+        consoleOutputManager.printGalacticCurrencyExpressionInTransactionLogs(inputWithoutCurrencyAssignments);
     }
 
 }

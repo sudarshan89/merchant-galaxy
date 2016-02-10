@@ -2,6 +2,7 @@ package co.in.model;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -15,7 +16,6 @@ import java.util.stream.IntStream;
 import static java.util.stream.Collectors.toList;
 
 /**
- * @TODO complete this
  * Created by s.sreenivasan on 2/6/2016.
  */
 @EqualsAndHashCode(of = "galacticCurrencyExpression")
@@ -112,4 +112,7 @@ public class GalacticCurrencyExpression {
         }
     }
 
+    public List<GalacticCurrency> getGalacticCurrencyExpression() {
+        return ImmutableList.copyOf(galacticCurrencyExpression);
+    }
 }

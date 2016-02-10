@@ -3,6 +3,7 @@ package co.in.model;
 import com.google.common.primitives.Ints;
 import lombok.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,8 +33,6 @@ public class GalacticCurrency {
                 });
         final List<GalacticCurrency> galacticCurrenciesInTransaction = galacticCurrencyComponents.map(galacticCurrencySymbol ->
                 createFromTransactionComponent(galacticCurrencySymbol, galacticCurrenciesMasterList)).collect(Collectors.toList());
-        if (galacticCurrenciesInTransaction.isEmpty())
-            throw new InvalidGalacticTransactionException("No Galactic Currencies Found");
         return galacticCurrenciesInTransaction;
     }
 
