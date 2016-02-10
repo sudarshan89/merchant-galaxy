@@ -6,6 +6,7 @@ import co.in.model.RomanSymbol;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -66,6 +67,18 @@ public class ConsoleOutputManagerTest {
         final String transactionOutputString = ConsoleOutputManager.
                 FormatOutputStringForSingleExpressionTransaction("how much is pish tegj glob glob ?", new GalacticCurrencyExpression(galacticCurrenciesInExpression));
         assertThat(transactionOutputString).isEqualTo(expected);
+    }
+
+    @Test
+    @Ignore
+    public void givenListOfCreditsTransactions_whenProcessingCreditsTransactions_itShouldReturnProcessedCreditsOutputTransactions(){
+
+    }
+
+    @Test
+    @Ignore
+    public void givenListOfGalacticCurrencyExpressionTransactions_whenGalacticCurrencyExpressioniTransactions_itShouldReturnProcessedGalacticCurrencyOutputTransactions(){
+
     }
 
 }

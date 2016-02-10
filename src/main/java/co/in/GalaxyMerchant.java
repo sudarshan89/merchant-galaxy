@@ -1,13 +1,10 @@
 package co.in;
 
 import co.in.model.*;
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import lombok.Getter;
 
-import java.io.Console;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -18,16 +15,10 @@ import static co.in.model.RareMetal.RareMetalsInTransactionLogs;
  */
 public class GalaxyMerchant {
 
-    /**
-     * @TODO Have a look at this
-     */
-    static List<RomanSymbol> romanSymbols;
+    @Getter
+    private final List<RomanSymbol> romanSymbols;
 
-    static {
-        init();
-    }
-
-    public static void init() {
+    public GalaxyMerchant() {
         RomanSymbol romanSymbolThousand = RomanSymbol.StandaloneSymbol('M', 1000);
         RomanSymbol romanSymbolFiveHundred = RomanSymbol.StandaloneSymbol('D', 500);
         RomanSymbol romanSymbolFifty = RomanSymbol.StandaloneSymbol('L', 50);
@@ -37,21 +28,21 @@ public class GalaxyMerchant {
         RomanSymbol romanSymbolOne = RomanSymbol.RepeatableAndSubtractableSymbol('I', Lists.newArrayList(romanSymbolFive, romanSymbolTen), 1);
         romanSymbols = ImmutableList.of(romanSymbolOne, romanSymbolFive, romanSymbolTen, romanSymbolFifty,
                 romanSymbolHundred, romanSymbolFiveHundred, romanSymbolThousand);
+
     }
 
+
     /**
-     * @TODO
      * @param merchantTransactions
      * @return
      */
     public List<String> startTrading(final List<String> merchantTransactions) {
-        List<String> output = new ArrayList<>();
         final List<String> sanitizedInput = SantizeInput(merchantTransactions);
         List<String> galacticCurrencyAssignments = SelectOnlyGalacticCurrencyAssignments(merchantTransactions, romanSymbols);
         final List<GalacticCurrency> galacticCurrencies = ImmutableList.copyOf(CreateGalacticCurrencies(galacticCurrencyAssignments, romanSymbols));
         final ArrayList<String> inputWithoutCurrencyAssignments = Lists.newArrayList(sanitizedInput);
         inputWithoutCurrencyAssignments.removeAll(galacticCurrencyAssignments);
-        CalculateAndPrint(inputWithoutCurrencyAssignments, galacticCurrencies);
+        List<String> output = CalculateAndPrint(inputWithoutCurrencyAssignments, galacticCurrencies);
         return output;
     }
 
@@ -82,24 +73,27 @@ public class GalaxyMerchant {
         }).collect(Collectors.toList());
     }
 
-    private static void CalculateAndPrint(List<String> inputWithoutCurrencyAssignments, final List<GalacticCurrency> galacticCurrenciesMasterList) {
+    private static List<String> CalculateAndPrint(List<String> inputWithoutCurrencyAssignments, final List<GalacticCurrency> galacticCurrenciesMasterList) {
         final List<RareMetal> rareMetals = RareMetalsInTransactionLogs(inputWithoutCurrencyAssignments, galacticCurrenciesMasterList);
         ConsoleOutputManager consoleOutputManager = new ConsoleOutputManager(galacticCurrenciesMasterList);
-        PrintGalacticExpressionInTransactionLogs(inputWithoutCurrencyAssignments, consoleOutputManager);
-        PrintCreditsTransactionsInTransactionLogs(inputWithoutCurrencyAssignments, consoleOutputManager, rareMetals);
+        final List<String> galacticExpressionInTransactionLogs = PrintGalacticExpressionInTransactionLogs(inputWithoutCurrencyAssignments, consoleOutputManager);
+        final List<String> creditsTransactionsInTransactionLogs = PrintCreditsTransactionsInTransactionLogs(inputWithoutCurrencyAssignments, consoleOutputManager, rareMetals);
+        List<String> output = Lists.newArrayList(galacticExpressionInTransactionLogs);
+        output.addAll(creditsTransactionsInTransactionLogs);
+        return output;
     }
 
-    private static void PrintCreditsTransactionsInTransactionLogs(List<String> inputWithoutCurrencyAssignments,
+    private static List<String> PrintCreditsTransactionsInTransactionLogs(List<String> inputWithoutCurrencyAssignments,
                                                                   ConsoleOutputManager consoleOutputManager, List<RareMetal> rareMetals) {
-        consoleOutputManager.printCreditsTransactionsInTransactionLogs(inputWithoutCurrencyAssignments ,rareMetals);
+        return consoleOutputManager.printCreditsTransactionsInTransactionLogs(inputWithoutCurrencyAssignments ,rareMetals);
     }
 
     /**
      * @param inputWithoutCurrencyAssignments
      * @return
      */
-    private static void PrintGalacticExpressionInTransactionLogs(List<String> inputWithoutCurrencyAssignments, ConsoleOutputManager consoleOutputManager) {
-        consoleOutputManager.printGalacticCurrencyExpressionInTransactionLogs(inputWithoutCurrencyAssignments);
+    private static List<String> PrintGalacticExpressionInTransactionLogs(List<String> inputWithoutCurrencyAssignments, ConsoleOutputManager consoleOutputManager) {
+        return consoleOutputManager.printGalacticCurrencyExpressionInTransactionLogs(inputWithoutCurrencyAssignments);
     }
 
 }

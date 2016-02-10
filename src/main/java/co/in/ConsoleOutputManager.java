@@ -25,18 +25,20 @@ public class ConsoleOutputManager {
         this.galacticCurrenciesMasterList = galacticCurrenciesMasterList;
     }
 
-    public void printGalacticCurrencyExpressionInTransactionLogs(List<String> inputWithoutCurrencyAssignments) {
+    public List<String> printGalacticCurrencyExpressionInTransactionLogs(List<String> inputWithoutCurrencyAssignments) {
         final List<String> galacticCurrencyTransactions = SelectGalacticCurrencyTransactions(inputWithoutCurrencyAssignments);
         final List<GalacticCurrencyExpression> galacticCurrencyExpressions = GetGalacticCurrencyExpressions(galacticCurrenciesMasterList, galacticCurrencyTransactions);
         final List<String> transactionOutput = FormatExpressionTransactions(galacticCurrencyTransactions, galacticCurrencyExpressions);
         Print(transactionOutput);
+        return transactionOutput;
     }
 
-    public void printCreditsTransactionsInTransactionLogs(List<String> inputWithoutCurrencyAssignments, List<RareMetal> rareMetals) {
+    public List<String> printCreditsTransactionsInTransactionLogs(List<String> inputWithoutCurrencyAssignments, List<RareMetal> rareMetals) {
         final List<String> creditTransactions = SelectCreditTransactions(inputWithoutCurrencyAssignments);
         final List<GalacticCurrencyExpression> galacticCurrencyExpressions = GetGalacticCurrencyExpressions(galacticCurrenciesMasterList, creditTransactions);
         final List<String> transactionOutput = FormatCreditTransactions(creditTransactions, rareMetals, galacticCurrencyExpressions);
         Print(transactionOutput);
+        return transactionOutput;
     }
 
 
@@ -128,7 +130,7 @@ public class ConsoleOutputManager {
                 filter(s -> galacticCurrenciesInTransaction.stream().anyMatch(galacticCurrency -> galacticCurrency.isSame(s))).collect(Collectors.toList());
         galacticCurrenciesInTransactionOutput.add(splits[splits.length-2]);
         galacticCurrenciesInTransactionOutput.add("is");
-        galacticCurrenciesInTransactionOutput.add(creditsValue.toPlainString());
+        galacticCurrenciesInTransactionOutput.add(creditsValue.stripTrailingZeros().toPlainString());
         galacticCurrenciesInTransactionOutput.add("Credits");
         return Joiner.on(" ").join(galacticCurrenciesInTransactionOutput);
     }
