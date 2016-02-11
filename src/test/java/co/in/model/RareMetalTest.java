@@ -76,8 +76,11 @@ public class RareMetalTest {
     }
 
     @Test
-    @Ignore
     public void givenAListOfTransaction_whenRareMetalTransactionsAreProcessed_itShouldSelectRareMetalTransactionsAndBuildRareMetalsFromTransactions(){
+        List<String> transactions= Lists.newArrayList("glob glob Silver is 34 Credits","prok Gold is 57800 Credits","how many Credits is glob prok Iron ?");
+        final List<RareMetal> rareMetals = RareMetal.RareMetalsInTransactionLogs(transactions, galacticCurrencies);
+        assertThat(rareMetals).extracting("symbol").containsExactly("Silver","Gold");
+        assertThat(rareMetals).extracting("perUnitValue").contains(BigDecimal.valueOf(17),BigDecimal.valueOf(11560));
 
     }
 }

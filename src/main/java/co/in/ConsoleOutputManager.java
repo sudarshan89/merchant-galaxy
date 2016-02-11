@@ -93,13 +93,12 @@ public class ConsoleOutputManager {
     }
 
     /**
-     * @TODO
      * @param creditsTransactions
      * @param rareMetals
      * @param galacticCurrencyExpressions
      * @return
      */
-    List<String> FormatCreditTransactions(List<String> creditsTransactions, List<RareMetal> rareMetals, List<GalacticCurrencyExpression> galacticCurrencyExpressions) {
+    private List<String> FormatCreditTransactions(List<String> creditsTransactions, List<RareMetal> rareMetals, List<GalacticCurrencyExpression> galacticCurrencyExpressions) {
         final List<String> creditTransactionOutputs = Lists.newArrayList();
         for (int i = 0; i < creditsTransactions.size(); i++) {
             final String creditsTransaction = creditsTransactions.get(i);

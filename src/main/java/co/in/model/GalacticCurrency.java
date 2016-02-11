@@ -53,12 +53,7 @@ public class GalacticCurrency {
     }
 
     public Boolean isValidSubtraction(GalacticCurrency galacticCurrency) {
-        return this.romanSymbol.getSubtractableFrom().contains(galacticCurrency.getRomanSymbol());
+        return this.isSubstractable() && this.romanSymbol.getSubtractableFrom().contains(galacticCurrency.getRomanSymbol());
     }
-
-    public boolean isLessThan(GalacticCurrency galacticCurrency) {
-        return this.getDecimalValue() < galacticCurrency.getDecimalValue();
-    }
-
 
 }
