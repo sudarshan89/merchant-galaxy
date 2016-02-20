@@ -3,7 +3,7 @@ Merchant's Guide to the Galaxy -
 
 **The repository is a solution for a conference management code kata. The kata is described in detail after the solution.**
 
-https://img.shields.io/shippable/56c782b11895ca44747475a6.svg
+![Badge](https://img.shields.io/shippable/56c782b11895ca44747475a6.svg)
 
 ## Solution approach
 
