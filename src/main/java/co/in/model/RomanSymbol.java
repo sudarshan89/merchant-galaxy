@@ -1,6 +1,5 @@
 package co.in.model;
 
-import com.google.common.primitives.Ints;
 import lombok.*;
 
 import java.util.Collections;

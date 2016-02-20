@@ -68,7 +68,6 @@ public class RareMetal {
      * @param inputWithoutCurrencyAssignments
      * @param galacticCurrenciesMasterList
      * @return
-     * @TODO Test this ?
      */
     public static List<RareMetal> RareMetalsInTransactionLogs(List<String> inputWithoutCurrencyAssignments,
                                                        List<GalacticCurrency> galacticCurrenciesMasterList) {

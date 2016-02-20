@@ -13,7 +13,13 @@ The domain model looks like the below.
 
 #### Domain model relationships.
 
-pppp
+A GalacticCurrencyExpression like *pish tegj glob glob* consists of multiple Galactic currencies like *pish* each galactic currency corresponds to one Roman symbol like *X*.
+
+The program categorises the input into 3 kinds of transactions.
+ 
+1. **Galactic Currency Expression Transaction** :- *how much is pish tegj glob glob ?*
+2. **Per unit Rare metal value transaction** :- *glob glob Silver is 34 Credits*
+3. **Total credit evaluation transaction** :- *how many Credits is glob prok Silver ?*
 
 ---
 
