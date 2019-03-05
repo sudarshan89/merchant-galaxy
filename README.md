@@ -1,7 +1,7 @@
 Merchant's Guide to the Galaxy -
 =========
 
-**The repository is a solution for a conference management code kata. The kata is described in detail after the solution.**
+**The repository is a solution for the Merchant's Guide to the code kata. The kata is described in detail after the solution.**
 
 ![Badge](https://img.shields.io/shippable/56c782b11895ca44747475a6.svg)
 
@@ -16,7 +16,7 @@ The domain model looks like the below.
 A GalacticCurrencyExpression like *pish tegj glob glob* consists of multiple Galactic currencies like *pish* each galactic currency corresponds to one Roman symbol like *X*.
 
 The program categorises the input into 3 kinds of transactions.
- 
+ conference
 1. **Galactic Currency Expression Transaction** :- *how much is pish tegj glob glob ?*
 2. **Per unit Rare metal value transaction** :- *glob glob Silver is 34 Credits*
 3. **Total credit evaluation transaction** :- *how many Credits is glob prok Silver ?*
